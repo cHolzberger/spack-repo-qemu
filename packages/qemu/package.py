@@ -28,16 +28,14 @@ class Qemu(AutotoolsPackage):
 
     # FIXME: Add a proper url for your package's homepage here.
     homepage = "https://www.example.com"
-    url      = "https://download.qemu.org/qemu-4.1.1.tar.xz"
+    url      = "https://download.qemu.org/qemu-4.2.0.tar.xz"
 
     # FIXME: Add a list of GitHub accounts to
     # notify when the package is updated.
     # maintainers = ['github_user1', 'github_user2']
+    version('4.2.0', sha256='d3481d4108ce211a053ef15be69af1bdd9dde1510fda80d92be0f6c3e98768f0')
 
-    version('4.2.0-rc4', sha256='d93edb940370f4255488f8ad8f5afc1e3b8189ea20136aaef8056b155b9dc765')
-    version('4.1.1', sha256='ed6fdbbdd272611446ff8036991e9b9f04a2ab2e3ffa9e79f3bab0eb9a95a1d2')
-
-    patch('https://github.com/saveriomiroddi/qemu-pinning/commit/master.patch', sha256='686547aff57011e7e7c9b4dbdd85811704441e2319687d1a120e0e0aafd7bf07', when="@4.1.1:")
+    patch('https://github.com/saveriomiroddi/qemu-pinning/commit/4e4fe6402e9e4943cc247a4ccfea21fa5f608b30.patch', sha256='c6b69ec2820605e24ff490dceefebf78768dc816a1bdaf43ab32b25976e4582e', when="@4.2.0:")
 
     def configure_args(self):
         # FIXME: Add arguments other than --prefix
