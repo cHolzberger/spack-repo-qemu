@@ -1,0 +1,1 @@
+/opt/ms-spack/opt/spack/linux-clear_linux_os32180-sandybridge/gcc-9.2.1/libxml2-2.9.9-4oijsbsivjejqfhbxpnluf4vnkwwq3by/.spack/repos/builtin/packages/libxml2/package.py

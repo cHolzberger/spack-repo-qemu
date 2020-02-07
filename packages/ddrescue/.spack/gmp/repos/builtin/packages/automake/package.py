@@ -1,0 +1,1 @@
+/opt/ms-spack/opt/spack/linux-clear_linux_os32180-sandybridge/gcc-9.2.1/gmp-6.1.2-zb72a45jfqltih6c7tecccyrpc2aowk2/.spack/repos/builtin/packages/automake/package.py
