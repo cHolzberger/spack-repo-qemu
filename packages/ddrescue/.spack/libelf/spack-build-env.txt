@@ -1,1 +1,0 @@
-/opt/ms-spack/opt/spack/linux-clear_linux_os32180-sandybridge/gcc-9.2.1/libelf-0.8.13-uehdmxpyhycwo7dygwqfzpn6evvdbete/.spack/spack-build-env.txt
