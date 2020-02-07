@@ -29,7 +29,12 @@ class Qemu(AutotoolsPackage):
     # FIXME: Add a proper url for your package's homepage here.
     homepage = "https://www.example.com"
     url      = "https://download.qemu.org/qemu-4.2.0.tar.xz"
-
+    depends_on("gawk",type=('build', 'link' ))
+    depends_on('libelf', type=('build', 'link'))
+    depends_on('jemalloc', type=('build', 'link'))
+    #depends_on("rdma-core")
+ #   depends_on("xfs")
+  #  depends_on("xfsinfo")
     # FIXME: Add a list of GitHub accounts to
     # notify when the package is updated.
     # maintainers = ['github_user1', 'github_user2']
@@ -42,22 +47,21 @@ class Qemu(AutotoolsPackage):
         # FIXME: If not needed delete this function
         args = [
                 "--extra-cflags=-DNCURSES_WIDECHAR=1 -fno-semantic-interposition -O3 -falign-functions=32",
-
                 "--enable-modules",
-                      "--disable-capstone",
-                                    "--disable-werror",
+                "--disable-capstone",
+                "--disable-werror",
         "--disable-bsd-user",
         "--disable-guest-agent",
            "--enable-curses",
 #"--enable-libssh",
 "--enable-kvm",
-"--target-list=x86_64-softmmu x86_64-linux-user",
+"--target-list=x86_64-softmmu",
 "--disable-sdl",
 "--disable-gtk",
 "--enable-vnc",
-"--enable-vnc-sasl",
-"--enable-vnc-jpeg",
-"--enable-vnc-png",
+#"--enable-vnc-sasl",
+#"--enable-vnc-jpeg",
+#"--enable-vnc-png",
 "--enable-curl",
 #"--enable-spice",
 "--enable-rbd",
@@ -72,7 +76,7 @@ class Qemu(AutotoolsPackage):
 "--enable-libusb",
 "--enable-usb-redir",
 "--enable-avx2",
-"--enable-dmg",
+#"--enable-dmg",
 "--enable-linux-aio",
 "--enable-tpm",
 "--enable-opengl",
@@ -80,21 +84,21 @@ class Qemu(AutotoolsPackage):
 "--enable-coroutine-pool",
 "--enable-jemalloc",
 "--enable-numa",
-"--enable-rdma",
+#"--enable-rdma",
 "--enable-modules",
-"--enable-trace-backends=simple,log",
-"--enable-nettle",
+#"--enable-trace-backends=simple,log",
+#"--enable-nettle",
 # virtfs + xattr ... required
 "--enable-virtfs",
 "--enable-attr",
 #Support xfsctl() notification and syncing for XFS backed virtual disks.
-"--enable-xfsctl",
+#"--enable-xfsctl",
 #--enable-netmap
 #--enable-virglrenderer
 #--enable-libnfs
 #--with-confsuffix="/ms"
 "--enable-pie",
-"--audio-drv-list=pa",
+#"--audio-drv-list=pa",
 "--enable-membarrier",
 "--disable-qom-cast-debug"
                 ]
