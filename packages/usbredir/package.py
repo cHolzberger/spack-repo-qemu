@@ -11,11 +11,11 @@
 # next to all the things you'll want to change. Once you've handled
 # them, you can save this file and test your package like this:
 #
-#     spack install bdsync
+#     spack install usbredir
 #
 # You can edit this file again by typing:
 #
-#     spack edit bdsync
+#     spack edit usbredir
 #
 # See the Spack documentation for more information on packaging.
 # ----------------------------------------------------------------------------
@@ -23,23 +23,24 @@
 from spack import *
 
 
-class Bdsync(MakefilePackage):
+class Usbredir(AutotoolsPackage):
     """FIXME: Put a proper description of your package here."""
 
     # FIXME: Add a proper url for your package's homepage here.
     homepage = "https://www.example.com"
-    url      = "https://github.com/TargetHolding/bdsync/archive/v0.10.2.tar.gz"
+    url      = "https://www.spice-space.org/download/usbredir/usbredir-0.7.1.tar.bz2"
 
     # FIXME: Add a list of GitHub accounts to
     # notify when the package is updated.
     # maintainers = ['github_user1', 'github_user2']
 
-    version('0.11.1', sha256='ee24781c9b063bd9da2c10a82b8c75dee1a813d0472d2dcce2b783a7dd9b55c7')
+    version('0.8.0', sha256='87bc9c5a81c982517a1bec70dc8d22e15ae197847643d58f20c0ced3c38c5e00')
 
     # FIXME: Add dependencies if required.
     # depends_on('foo')
-    depends_on('openssl')
-    depends_on('pandoc',type=('build'))
-    def install(self, spec, prefix):
-         mkdirp(prefix.bin)
-         install('bdsync', prefix.bin)
+    depends_on('libusb')
+    def configure_args(self):
+        # FIXME: Add arguments other than --prefix
+        # FIXME: If not needed delete this function
+        args = []
+        return args

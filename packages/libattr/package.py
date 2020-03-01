@@ -11,11 +11,11 @@
 # next to all the things you'll want to change. Once you've handled
 # them, you can save this file and test your package like this:
 #
-#     spack install bdsync
+#     spack install libattr
 #
 # You can edit this file again by typing:
 #
-#     spack edit bdsync
+#     spack edit libattr
 #
 # See the Spack documentation for more information on packaging.
 # ----------------------------------------------------------------------------
@@ -23,23 +23,24 @@
 from spack import *
 
 
-class Bdsync(MakefilePackage):
+class Libattr(AutotoolsPackage):
     """FIXME: Put a proper description of your package here."""
 
     # FIXME: Add a proper url for your package's homepage here.
     homepage = "https://www.example.com"
-    url      = "https://github.com/TargetHolding/bdsync/archive/v0.10.2.tar.gz"
+    url      = "http://download.savannah.nongnu.org/releases/attr/attr-2.4.48.tar.gz"
 
     # FIXME: Add a list of GitHub accounts to
     # notify when the package is updated.
     # maintainers = ['github_user1', 'github_user2']
 
-    version('0.11.1', sha256='ee24781c9b063bd9da2c10a82b8c75dee1a813d0472d2dcce2b783a7dd9b55c7')
+    version('2.4.48', sha256='5ead72b358ec709ed00bbf7a9eaef1654baad937c001c044fe8b74c57f5324e7')
 
     # FIXME: Add dependencies if required.
     # depends_on('foo')
-    depends_on('openssl')
-    depends_on('pandoc',type=('build'))
-    def install(self, spec, prefix):
-         mkdirp(prefix.bin)
-         install('bdsync', prefix.bin)
+
+    def configure_args(self):
+        # FIXME: Add arguments other than --prefix
+        # FIXME: If not needed delete this function
+        args = []
+        return args

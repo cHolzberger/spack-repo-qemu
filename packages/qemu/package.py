@@ -32,9 +32,21 @@ class Qemu(AutotoolsPackage):
     depends_on("gawk",type=('build', 'link' ))
     depends_on('libelf', type=('build', 'link'))
     depends_on('jemalloc', type=('build', 'link'))
+    depends_on("libcap-ng")
+    depends_on("curl")
+    depends_on("glib")
+    depends_on("pixman")
+    depends_on("numactl")
+    depends_on("libaio")
+    depends_on("liburing")
+    depends_on("libiscsi")
+    depends_on("libusb")
+    depends_on("usbredir")
+ #   depends_on("libcap")
+    depends_on("libattr")
     #depends_on("rdma-core")
- #   depends_on("xfs")
-  #  depends_on("xfsinfo")
+    #   depends_on("xfs")
+    #  depends_on("xfsinfo")
     # FIXME: Add a list of GitHub accounts to
     # notify when the package is updated.
     # maintainers = ['github_user1', 'github_user2']
@@ -64,7 +76,7 @@ class Qemu(AutotoolsPackage):
 #"--enable-vnc-png",
 "--enable-curl",
 #"--enable-spice",
-"--enable-rbd",
+#"--enable-rbd",
 "--enable-attr",
 "--enable-cap-ng",
 "--enable-vhost-net",
@@ -78,14 +90,14 @@ class Qemu(AutotoolsPackage):
 "--enable-avx2",
 #"--enable-dmg",
 "--enable-linux-aio",
+#"--enable-linux-io-uring",
 "--enable-tpm",
-"--enable-opengl",
+#"--enable-opengl",
 "--enable-libiscsi",
 "--enable-coroutine-pool",
 "--enable-jemalloc",
 "--enable-numa",
 #"--enable-rdma",
-"--enable-modules",
 #"--enable-trace-backends=simple,log",
 #"--enable-nettle",
 # virtfs + xattr ... required
