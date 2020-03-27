@@ -39,7 +39,9 @@ class Bdsync(MakefilePackage):
     # FIXME: Add dependencies if required.
     # depends_on('foo')
     depends_on('openssl')
-    depends_on('pandoc',type=('build'))
+#    depends_on('pandoc',type=('build'))
+    def build(self, spec,prefix):
+        make("bdsync")
     def install(self, spec, prefix):
-         mkdirp(prefix.bin)
-         install('bdsync', prefix.bin)
+        mkdirp(prefix.bin)
+        install('bdsync', prefix.bin)
