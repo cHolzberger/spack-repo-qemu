@@ -39,8 +39,10 @@ class Qemu(AutotoolsPackage):
     # notify when the package is updated.
     # maintainers = ['github_user1', 'github_user2']
     version('4.2.0', sha256='d3481d4108ce211a053ef15be69af1bdd9dde1510fda80d92be0f6c3e98768f0')
-
-    patch('https://github.com/saveriomiroddi/qemu-pinning/commit/4e4fe6402e9e4943cc247a4ccfea21fa5f608b30.patch', sha256='c6b69ec2820605e24ff490dceefebf78768dc816a1bdaf43ab32b25976e4582e', when="@4.2.0:")
+    version('5.0.0-rc4', sha256='5cbec3102322cfe9810a9628aa85f373d71167c2e4be628db0f03fc5dd43799f')        
+    patch('https://github.com/saveriomiroddi/qemu-pinning/commit/4e4fe6402e9e4943cc247a4ccfea21fa5f608b30.patch', sha256='c6b69ec2820605e24ff490dceefebf78768dc816a1bdaf43ab32b25976e4582e', when='@4.2.0')
+    patch('qemu-60fps.patch', sha256='5ba40805df20aaac369d8e217f3fa0e8d7e29a12ca98908034e7062aafcfcc98')
+    patch('qemu-pinning-v5.0.0-rc4.patch', sha256='de6332af96fcbac0acda9dbfa75b5e641cb104abbe4cf224daec7b0fd616876a', when='@5.0.0-rc4')
 
     def configure_args(self):
         # FIXME: Add arguments other than --prefix
@@ -67,6 +69,7 @@ class Qemu(AutotoolsPackage):
 "--enable-rbd",
 "--enable-attr",
 "--enable-cap-ng",
+# HVHOST Stuff
 "--enable-vhost-net",
 "--enable-vhost-scsi",
 "--enable-vhost-vsock",
@@ -75,13 +78,13 @@ class Qemu(AutotoolsPackage):
 "--enable-tools",
 "--enable-libusb",
 "--enable-usb-redir",
-"--enable-avx2",
 #"--enable-dmg",
-"--enable-linux-aio",
 "--enable-tpm",
 "--enable-opengl",
 "--enable-libiscsi",
 "--enable-coroutine-pool",
+# Opt
+"--enable-avx2",
 "--enable-jemalloc",
 "--enable-numa",
 #"--enable-rdma",
@@ -98,8 +101,12 @@ class Qemu(AutotoolsPackage):
 #--enable-libnfs
 #--with-confsuffix="/ms"
 "--enable-pie",
-#"--audio-drv-list=pa",
 "--enable-membarrier",
-"--disable-qom-cast-debug"
-                ]
+"--disable-qom-cast-debug",
+#IO 
+"--enable-linux-aio",
+"--enable-linux-io-uring",
+# AUDIO]
+"--audio-drv-list=pa",
+]
         return args
