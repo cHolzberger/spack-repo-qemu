@@ -11,11 +11,11 @@
 # next to all the things you'll want to change. Once you've handled
 # them, you can save this file and test your package like this:
 #
-#     spack install bdsync
+#     spack install libcap-ng
 #
 # You can edit this file again by typing:
 #
-#     spack edit bdsync
+#     spack edit libcap-ng
 #
 # See the Spack documentation for more information on packaging.
 # ----------------------------------------------------------------------------
@@ -23,25 +23,24 @@
 from spack import *
 
 
-class Bdsync(MakefilePackage):
+class LibcapNg(AutotoolsPackage):
     """FIXME: Put a proper description of your package here."""
 
     # FIXME: Add a proper url for your package's homepage here.
     homepage = "https://www.example.com"
-    url      = "https://github.com/TargetHolding/bdsync/archive/v0.10.2.tar.gz"
+    url      = "https://people.redhat.com/sgrubb/libcap-ng/libcap-ng-0.7.10.tar.gz"
 
     # FIXME: Add a list of GitHub accounts to
     # notify when the package is updated.
     # maintainers = ['github_user1', 'github_user2']
 
-    version('0.11.1', sha256='ee24781c9b063bd9da2c10a82b8c75dee1a813d0472d2dcce2b783a7dd9b55c7')
+    version('0.7.10', sha256='a84ca7b4e0444283ed269b7a29f5b6187f647c82e2b876636b49b9a744f0ffbf')
 
     # FIXME: Add dependencies if required.
     # depends_on('foo')
-    depends_on('openssl')
-#    depends_on('pandoc',type=('build'))
-    def build(self, spec,prefix):
-        make("bdsync")
-    def install(self, spec, prefix):
-        mkdirp(prefix.bin)
-        install('bdsync', prefix.bin)
+
+    def configure_args(self):
+        # FIXME: Add arguments other than --prefix
+        # FIXME: If not needed delete this function
+        args = []
+        return args

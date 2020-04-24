@@ -1,0 +1,4 @@
+Compiling test case __kernel_rwf_t
+gcc -D_GNU_SOURCE -include config-host.h -o /tmp/fio-conf-13-449853-31311.exe /tmp/fio-conf-27418-449853-4572.c
+Compiling test case __kernel_timespec
+gcc -D_GNU_SOURCE -include config-host.h -o /tmp/fio-conf-13-449853-31311.exe /tmp/fio-conf-27418-449853-4572.c
