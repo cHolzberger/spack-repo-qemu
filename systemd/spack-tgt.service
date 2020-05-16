@@ -1,0 +1,22 @@
+[Unit]
+
+Description=tgt ISCSI
+After=network.target 
+
+[Service]
+#Type=notify
+Type=Simple
+ExecStart=/opt/qemu/sbin/tgtd -f -D
+
+ExecStartPost=/opt/qemu/sbin/tgtadm --op update --mode sys --name State -v offline
+ExecStartPost=/opt/qemu/sbin/tgt-admin -e 
+ExecStartPost=/opt/qemu/sbin/tgtadm --op update --mode sys --name State -v ready
+
+ExecReload=/opt/qemu/sbin/tgt-admin --update ALL
+
+ExecStop=/opt/qemu/sbin/tgtadm --op update --mode sys --name State -v offline
+ExecStop=/opt/qemu/sbin/tgt-admin --update ALL
+ExecStop=/opt/qemu/sbin/tgtadm --op delete --mode system
+
+[Install]
+WantedBy=multi-user.target
