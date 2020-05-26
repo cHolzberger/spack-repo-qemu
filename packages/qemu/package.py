@@ -44,6 +44,7 @@ class Qemu(AutotoolsPackage):
     depends_on("usbredir")
  #   depends_on("libcap")
     depends_on("libattr")
+    depends_on("libseccomp")
     #depends_on("rdma-core")
     #   depends_on("xfs")
     #  depends_on("xfsinfo")
@@ -74,61 +75,67 @@ class Qemu(AutotoolsPackage):
                 "--enable-modules",
                 "--disable-capstone",
                 "--disable-werror",
-        "--disable-bsd-user",
-        "--disable-guest-agent",
-           "--enable-curses",
+                "--disable-bsd-user",
+                "--disable-guest-agent",
+                "--enable-curses",
 #"--enable-libssh",
-"--enable-kvm",
-"--target-list=x86_64-softmmu",
-"--disable-sdl",
-"--disable-gtk",
-"--enable-vnc",
+                "--enable-kvm",
+                "--target-list=x86_64-softmmu",
+                "--disable-sdl",
+                "--disable-gtk",
+                "--enable-vnc",
 #"--enable-vnc-sasl",
 #"--enable-vnc-jpeg",
 #"--enable-vnc-png",
-"--enable-curl",
+                "--enable-curl",
 #"--enable-spice",
-#"--enable-rbd",
-"--enable-attr",
-"--enable-cap-ng",
+#                "--enable-rbd", # thiu means librados for ceph
+                "--enable-attr",
+                "--enable-cap-ng",
 # HVHOST Stuff
-"--enable-vhost-net",
-"--enable-vhost-scsi",
-"--enable-vhost-vsock",
-"--enable-vhost-kernel",
-"--enable-vhost-user",
-"--enable-tools",
-"--enable-libusb",
-"--enable-usb-redir",
+                "--enable-vhost-net",
+                "--enable-vhost-scsi",
+                "--enable-vhost-vsock",
+                "--enable-vhost-kernel",
+                "--enable-vhost-user",
+                "--enable-tools",
+                "--enable-libusb",
+                "--enable-usb-redir",
 #"--enable-dmg",
-"--enable-linux-aio",
-"--enable-tpm",
+                "--enable-linux-aio",
+                "--enable-tpm",
 #"--enable-opengl",
-"--enable-libiscsi",
-"--enable-coroutine-pool",
+                "--enable-libiscsi",
+                "--enable-coroutine-pool",
 # Opt
-"--enable-avx2",
-"--enable-jemalloc",
-"--enable-numa",
+                "--enable-avx2",
+                "--enable-avx512f",
+                "--enable-jemalloc",
+                "--enable-malloc-trim",
+                "--enable-numa",
 #"--enable-rdma",
 #"--enable-trace-backends=simple,log",
 #"--enable-nettle",
 # virtfs + xattr ... required
-"--enable-virtfs",
-"--enable-attr",
+               "--enable-virtfs",
+               "--enable-attr",
+               "--enable-vhost-user-fs",
+               "--enable-seccomp",
 #Support xfsctl() notification and syncing for XFS backed virtual disks.
+       
 #"--enable-xfsctl",
 #--enable-netmap
 #--enable-virglrenderer
 #--enable-libnfs
 #--with-confsuffix="/ms"
-"--enable-pie",
-"--enable-membarrier",
-"--disable-qom-cast-debug",
+
+              "--enable-pie",
+              "--enable-membarrier",
+              "--disable-qom-cast-debug",
 #IO 
-"--enable-linux-aio",
-"--enable-linux-io-uring",
+              "--enable-linux-aio",
+              "--enable-linux-io-uring",
 # AUDIO]
-"--audio-drv-list=pa",
+              "--audio-drv-list=pa",
 ]
         return args

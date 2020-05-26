@@ -5,4 +5,4 @@
 spack:
   # add package specs to the `specs` list
   specs: [qemu@5.0.0, tgt]
-  view: /opt/qemu-env/qemu-v5.0.0/
+  view: /opt/qemu-env/qemu-v5.0.0-vfs/
