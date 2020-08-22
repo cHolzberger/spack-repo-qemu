@@ -87,7 +87,7 @@ class Qemu(AutotoolsPackage):
                 "--enable-vnc",
 #"--enable-vnc-sasl",
 #"--enable-vnc-jpeg",
-#"--enable-vnc-png",
+                "--enable-vnc-png",
                 "--enable-curl",
 #"--enable-spice",
 #                "--enable-rbd", # thiu means librados for ceph
