@@ -1,0 +1,209 @@
+From f96581af2d8bf5e5e480bca175d7b0c5c9d25baa Mon Sep 17 00:00:00 2001
+From: Saverio Miroddi <saverio.pub2@gmail.com>
+Date: Fri, 16 Aug 2019 15:09:21 +0200
+Subject: [PATCH] Pinning patch for v5.0.0
+
+Changes:
+
+- Updated what it seems to be an updated format of qemu-options.hx
+- Adjusted vl.c patch to new file layout
+---
+ hw/core/machine.c   | 32 ++++++++++++++++++++++++++++++++
+ include/hw/boards.h |  2 ++
+ qemu-options.hx     | 10 ++++++++++
+ softmmu/cpus.c      | 10 ++++++++++
+ softmmu/vl.c        | 35 +++++++++++++++++++++++++++++++++++
+ 5 files changed, 89 insertions(+)
+
+diff --git a/hw/core/machine.c b/hw/core/machine.c
+index 8d1a90c6cf4..fba4a8dd965 100644
+--- a/hw/core/machine.c
++++ b/hw/core/machine.c
+@@ -775,6 +775,34 @@ static void smp_parse(MachineState *ms, QemuOpts *opts)
+     }
+ }
+ 
++static int vcpu_parse(MachineState *ms, QemuOpts *opts)
++{
++    MachineClass *mc = MACHINE_GET_CLASS(ms);
++
++    int num_affinity = 0;
++
++    if (opts) {
++        unsigned vcpu = qemu_opt_get_number(opts, "vcpunum", 0);
++        unsigned affinity = qemu_opt_get_number(opts,"affinity", 0);
++
++        if (vcpu < ms->smp.cpus * ms->smp.cores * ms->smp.threads) {
++            if (mc->vcpu_affinity[vcpu] == -1) {
++                mc->vcpu_affinity[vcpu] = affinity;
++            }
++            else {
++                error_report("Duplicate affinity statement for vcpu %d\n", vcpu);
++                return -1;
++            }
++            num_affinity += 1;
++        }
++        else {
++            error_report("VCPU %d is more than allowed %d VCPUs in the system\n", vcpu, ms->smp.cores);
++            return -1;
++        }
++    }
++    return 0;
++}
++
+ static void machine_class_init(ObjectClass *oc, void *data)
+ {
+     MachineClass *mc = MACHINE_CLASS(oc);
+@@ -783,6 +811,10 @@ static void machine_class_init(ObjectClass *oc, void *data)
+     mc->default_ram_size = 128 * MiB;
+     mc->rom_file_has_mr = true;
+     mc->smp_parse = smp_parse;
++    mc->vcpu_parse = vcpu_parse;
++
++    for (int i = 0; i < CPU_SETSIZE; i++)
++        mc->vcpu_affinity[i] = -1;
+ 
+     /* numa node memory size aligned on 8MB by default.
+      * On Linux, each node's border has to be 8MB aligned
+diff --git a/include/hw/boards.h b/include/hw/boards.h
+index 426ce5f625a..34f9f6ef1d3 100644
+--- a/include/hw/boards.h
++++ b/include/hw/boards.h
+@@ -176,12 +176,14 @@ struct MachineClass {
+     void (*hot_add_cpu)(MachineState *state, const int64_t id, Error **errp);
+     int (*kvm_type)(MachineState *machine, const char *arg);
+     void (*smp_parse)(MachineState *ms, QemuOpts *opts);
++    int (*vcpu_parse)(MachineState *ms, QemuOpts *opts);
+ 
+     BlockInterfaceType block_default_type;
+     int units_per_default_bus;
+     int max_cpus;
+     int min_cpus;
+     int default_cpus;
++    int vcpu_affinity[CPU_SETSIZE];
+     unsigned int no_serial:1,
+         no_parallel:1,
+         no_floppy:1,
+diff --git a/qemu-options.hx b/qemu-options.hx
+index 708583b4ce0..964cf41fd19 100644
+--- a/qemu-options.hx
++++ b/qemu-options.hx
+@@ -182,6 +182,16 @@ SRST
+     hotpluggable CPUs.
+ ERST
+ 
++DEF("vcpu", HAS_ARG, QEMU_OPTION_vcpu,
++    "-vcpu [vcpunum=]n[,affinity=affinity]\n"
++    "-vcpu [vcpunum=]n[,affinity=affinity]\n", QEMU_ARCH_ALL)
++SRST
++@item -vcpu [vcpunum=]n[,affinity=affinity]
++@itemx -vcpu [vcpunum=]n[,affinity=affinity]
++@findex -vcpu
++VCPU Affinity. If specified, specify for all the CPUs.
++ERST
++
+ DEF("numa", HAS_ARG, QEMU_OPTION_numa,
+     "-numa node[,mem=size][,cpus=firstcpu[-lastcpu]][,nodeid=node][,initiator=node]\n"
+     "-numa node[,memdev=id][,cpus=firstcpu[-lastcpu]][,nodeid=node][,initiator=node]\n"
+diff --git a/softmmu/cpus.c b/softmmu/cpus.c
+index a802e899abb..fd86012c489 100644
+--- a/softmmu/cpus.c
++++ b/softmmu/cpus.c
+@@ -1954,6 +1954,10 @@ static void qemu_hax_start_vcpu(CPUState *cpu)
+ static void qemu_kvm_start_vcpu(CPUState *cpu)
+ {
+     char thread_name[VCPU_THREAD_NAME_SIZE];
++    cpu_set_t cpuset;
++
++    MachineState *ms = MACHINE(qdev_get_machine());
++    MachineClass *mc = MACHINE_GET_CLASS(ms);
+ 
+     cpu->thread = g_malloc0(sizeof(QemuThread));
+     cpu->halt_cond = g_malloc0(sizeof(QemuCond));
+@@ -1962,6 +1966,12 @@ static void qemu_kvm_start_vcpu(CPUState *cpu)
+              cpu->cpu_index);
+     qemu_thread_create(cpu->thread, thread_name, qemu_kvm_cpu_thread_fn,
+                        cpu, QEMU_THREAD_JOINABLE);
++
++    if (mc->vcpu_affinity[cpu->cpu_index] != -1) {
++      CPU_ZERO(&cpuset);
++      CPU_SET(mc->vcpu_affinity[cpu->cpu_index], &cpuset);
++      pthread_setaffinity_np((cpu->thread)->thread, sizeof(cpu_set_t), &cpuset);
++    }
+ }
+ 
+ static void qemu_hvf_start_vcpu(CPUState *cpu)
+diff --git a/softmmu/vl.c b/softmmu/vl.c
+index 4eb9d1f7fd5..33a08986f21 100644
+--- a/softmmu/vl.c
++++ b/softmmu/vl.c
+@@ -1077,6 +1077,22 @@ static void configure_blockdev(BlockdevOptionsQueue *bdo_queue,
+ 
+ }
+ 
++static QemuOptsList qemu_vcpu_opts = {
++    .name = "vcpu-opts",
++    .implied_opt_name = "vcpunum",
++    .head = QTAILQ_HEAD_INITIALIZER(qemu_vcpu_opts.head),
++    .desc = {
++        {
++            .name = "vcpunum",
++            .type = QEMU_OPT_NUMBER,
++        }, {
++            .name = "affinity",
++            .type = QEMU_OPT_NUMBER,
++        },
++        { /*End of list */ }
++    },
++};
++
+ static QemuOptsList qemu_smp_opts = {
+     .name = "smp-opts",
+     .implied_opt_name = "cpus",
+@@ -2028,6 +2044,14 @@ static inline bool nonempty_str(const char *str)
+     return str && *str;
+ }
+ 
++static int vl_parse_vcpu(void *opaque, QemuOpts *opts, Error **errp)
++{
++    MachineState *ms = opaque;
++    MachineClass *mc = MACHINE_GET_CLASS(ms);
++
++    return mc->vcpu_parse(ms, opts);
++}
++
+ static int parse_fw_cfg(void *opaque, QemuOpts *opts, Error **errp)
+ {
+     gchar *buf;
+@@ -2905,6 +2929,7 @@ void qemu_init(int argc, char **argv, char **envp)
+     qemu_add_opts(&qemu_accel_opts);
+     qemu_add_opts(&qemu_mem_opts);
+     qemu_add_opts(&qemu_smp_opts);
++    qemu_add_opts(&qemu_vcpu_opts);
+     qemu_add_opts(&qemu_boot_opts);
+     qemu_add_opts(&qemu_add_fd_opts);
+     qemu_add_opts(&qemu_object_opts);
+@@ -3526,6 +3551,12 @@ void qemu_init(int argc, char **argv, char **envp)
+                     exit(1);
+                 }
+                 break;
++            case QEMU_OPTION_vcpu:
++                if (!qemu_opts_parse_noisily(qemu_find_opts("vcpu-opts"),
++                                             optarg, true)) {
++                    exit(1);
++                }
++                break;
+             case QEMU_OPTION_vnc:
+                 vnc_parse(optarg, &error_fatal);
+                 break;
+@@ -3978,6 +4009,10 @@ void qemu_init(int argc, char **argv, char **envp)
+         exit(1);
+     }
+ 
++    if (qemu_opts_foreach(qemu_find_opts("vcpu-opts"), vl_parse_vcpu, current_machine, NULL)) {
++        exit(1);
++    }
++
+     if (mem_prealloc) {
+         char *val;
+ 
